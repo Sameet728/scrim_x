@@ -34,6 +34,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://scrimx-git-main-sameets-projects-48b152d9.vercel.app',
   'https://scrimx-sigma.vercel.app',
+  'https://www.scrimx.online',
   'http://localhost:3000'
 ].filter(Boolean);
 
