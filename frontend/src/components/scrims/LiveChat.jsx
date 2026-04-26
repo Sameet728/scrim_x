@@ -42,12 +42,34 @@ const LiveChat = ({ scrim }) => {
     });
 
     socketRef.current.on('scrim_message', (message) => {
-      setMessages((prev) => [...prev, {
-        _id: message._id || Date.now(),
-        sender: message.sender,
-        message: message.content || message.message,
-        createdAt: message.createdAt
-      }]);
+      setMessages((prev) => {
+        // Deduplicate: if message _id already exists, skip it
+        if (message._id && prev.some(m => m._id === message._id)) return prev;
+        // Skip if it's our own message (already shown optimistically via temp id)
+        const senderId = message.sender?._id || message.sender;
+        if (user && senderId === user._id) {
+          // Replace the optimistic temp message with the real one (if exists)
+          const tempIdx = prev.findIndex(m => m._tempLocal && m.sender?._id === user._id && m.message === (message.content || message.message));
+          if (tempIdx !== -1) {
+            const updated = [...prev];
+            updated[tempIdx] = {
+              _id: message._id || Date.now(),
+              sender: message.sender,
+              message: message.content || message.message,
+              createdAt: message.createdAt
+            };
+            return updated;
+          }
+          // If no temp match found, don't add duplicate from self
+          return prev;
+        }
+        return [...prev, {
+          _id: message._id || Date.now(),
+          sender: message.sender,
+          message: message.content || message.message,
+          createdAt: message.createdAt
+        }];
+      });
     });
 
     return () => {
@@ -68,6 +90,22 @@ const LiveChat = ({ scrim }) => {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !user) return;
+
+    // Optimistic: show message immediately
+    const optimisticMsg = {
+      _id: `temp_${Date.now()}`,
+      _tempLocal: true,
+      sender: {
+        _id: user._id,
+        username: user.username,
+        ign: user.ign,
+        avatar: user.avatar,
+        role: user.role
+      },
+      message: newMessage,
+      createdAt: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
 
     socketRef.current.emit('scrim_message', {
       scrimId: scrim._id,
