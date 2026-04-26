@@ -78,6 +78,7 @@ exports.createEnterpriseTournament = async (req, res) => {
       region: payload.region,
       platformType: payload.platformType,
       visibility: payload.visibility,
+      banner: payload.banner,
       status: 'draft',
       schedule,
       participation: payload.participation,
