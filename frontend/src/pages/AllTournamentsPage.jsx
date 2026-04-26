@@ -118,7 +118,7 @@ const AllTournamentsPage = () => {
                     {/* Banner */}
                     <div className="relative h-32 bg-gradient-to-br from-dark-800 to-dark-700 overflow-hidden">
                       <img
-                        src={t.banner || 'https://res.cloudinary.com/dwy40gq1t/image/upload/v1738743132/default_gaming_banner_t8u7m9.jpg'}
+                        src={t.banner || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'}
                         alt={t.title}
                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                       />
