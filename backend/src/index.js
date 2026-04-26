@@ -33,6 +33,7 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
   'http://localhost:5173',
   'https://scrimx-git-main-sameets-projects-48b152d9.vercel.app',
+  'https://scrimx-sigma.vercel.app',
   'http://localhost:3000'
 ].filter(Boolean);
 
