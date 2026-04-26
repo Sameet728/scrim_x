@@ -17,7 +17,7 @@ const LiveChat = ({ scrim }) => {
     // Fetch initial chat history
     const fetchHistory = async () => {
       try {
-        const res = await api.get(`/chat/${scrim._id}`);
+        const res = await api.get(`/chat/scrim/${scrim._id}`);
         if(res.messages) {
            setMessages(res.messages);
         }
@@ -31,16 +31,23 @@ const LiveChat = ({ scrim }) => {
 
     // Initialize Socket
     const wsUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    const token = localStorage.getItem('scrimx_token');
     socketRef.current = io(wsUrl, {
-      withCredentials: true
+      withCredentials: true,
+      auth: { token }
     });
 
     socketRef.current.on('connect', () => {
       socketRef.current.emit('join_scrim', scrim._id);
     });
 
-    socketRef.current.on('receive_message', (message) => {
-      setMessages((prev) => [...prev, message]);
+    socketRef.current.on('scrim_message', (message) => {
+      setMessages((prev) => [...prev, {
+        _id: message._id || Date.now(),
+        sender: message.sender,
+        message: message.content || message.message,
+        createdAt: message.createdAt
+      }]);
     });
 
     return () => {
@@ -62,10 +69,9 @@ const LiveChat = ({ scrim }) => {
     e.preventDefault();
     if (!newMessage.trim() || !user) return;
 
-    socketRef.current.emit('send_message', {
+    socketRef.current.emit('scrim_message', {
       scrimId: scrim._id,
-      senderId: user._id,
-      message: newMessage
+      content: newMessage
     });
     setNewMessage('');
   };
