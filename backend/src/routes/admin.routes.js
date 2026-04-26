@@ -6,6 +6,8 @@ const {
   deleteUser,
   getAllScrims,
   deleteScrim,
+  getAllTournaments,
+  deleteTournament,
   resetUserPassword,
   forceJoinEvent,
   grantSuperOrganizer,
@@ -56,6 +58,13 @@ router.route('/scrims')
 
 router.route('/scrims/:id')
   .delete(deleteScrim);
+
+// Tournament Management Routes
+router.route('/tournaments')
+  .get(getAllTournaments);
+
+router.route('/tournaments/:id')
+  .delete(deleteTournament);
 
 // Plan Upgrade Request Routes
 const { getAllUpgradeRequests, processUpgradeRequest } = require('../controllers/planRequest.controller');
