@@ -298,7 +298,7 @@ const TournamentDetails = () => {
     <div className="min-h-screen bg-dark-950 text-dark-200">
       {/* Hero Banner */}
       <div 
-        className="relative h-80 bg-dark-900 border-b border-surface-border flex items-end overflow-hidden"
+        className="relative h-[400px] lg:h-[500px] bg-dark-900 border-b border-surface-border flex items-end overflow-hidden"
         style={{
           backgroundImage: `url(${tournament.banner || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'})`,
           backgroundSize: 'cover',
