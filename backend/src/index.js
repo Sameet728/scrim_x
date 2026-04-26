@@ -49,10 +49,20 @@ app.use(cors({
   credentials: true
 }));
 
+// Helper: extract real client IP from x-forwarded-for (Render sends comma-separated list)
+const getClientIp = (req) => {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) {
+    // First IP in the list is the real client IP
+    return forwarded.split(',')[0].trim();
+  }
+  return req.ip || req.connection?.remoteAddress || 'unknown';
+};
+
 // Global rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 1000,
+  max: 2000,
   message: { success: false, message: 'Too many requests, please try again later.' }
 });
 app.use('/api/', limiter);
@@ -184,7 +194,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/scrimx')
     console.log('✅ MongoDB connected');
     // Start background schedulers
     initCronJobs();
-    
+
     const httpServer = http.createServer(app);
     const io = new Server(httpServer, {
       cors: {
@@ -205,7 +215,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/scrimx')
       if (e.code === 'EADDRINUSE') {
         console.log(`⚠️ Port ${PORT} is occupied by a zombie process. Auto-killing...`);
         const { exec } = require('child_process');
-        
+
         if (process.platform === 'win32') {
           exec(`netstat -ano | findstr :${PORT}`, (err, stdout) => {
             if (!stdout) return process.exit(1);
