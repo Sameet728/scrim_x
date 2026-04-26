@@ -116,7 +116,7 @@ const AllTournamentsPage = () => {
                     className="group bg-dark-900 border border-surface-border rounded-2xl overflow-hidden hover:border-neon-cyan/40 hover:shadow-[0_0_20px_rgba(34,211,238,0.08)] transition-all cursor-pointer"
                   >
                     {/* Banner */}
-                    <div className="relative h-32 bg-gradient-to-br from-dark-800 to-dark-700 overflow-hidden">
+                    <div className="relative h-48 bg-gradient-to-br from-dark-800 to-dark-700 overflow-hidden">
                       <img
                         src={t.banner || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'}
                         alt={t.title}
