@@ -150,8 +150,9 @@ const getScrims = async (req, res, next) => {
       case 'fee_asc': sortOption = { entryFee: 1 }; break;
       case 'fee_desc': sortOption = { entryFee: -1 }; break;
       case 'date_asc': sortOption = { isElite: -1, date: 1 }; break;
+      case '-date':
       case 'newest': sortOption = { isElite: -1, createdAt: -1 }; break;
-      default: sortOption = { isElite: -1, date: -1 };
+      default: sortOption = { isElite: -1, createdAt: -1 };
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
