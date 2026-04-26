@@ -57,6 +57,7 @@ import AdminDisputes from './pages/dashboard/AdminDisputes';
 import AdminLogin from './pages/AdminLogin';
 import AdminUsers from './pages/dashboard/AdminUsers';
 import AdminScrims from './pages/dashboard/AdminScrims';
+import AdminTournaments from './pages/dashboard/AdminTournaments';
 import AdminSettings from './pages/dashboard/AdminSettings';
 import AdminSimulator from './pages/dashboard/AdminSimulator';
 import AdminBoosts from './pages/dashboard/AdminBoosts';
@@ -181,6 +182,7 @@ const App = () => {
         <Route path="/admin/boosts" element={<ProtectedRoute roles={['admin']}><AdminBoosts /></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute roles={['admin']}><AdminUsers /></ProtectedRoute>} />
         <Route path="/admin/scrims" element={<ProtectedRoute roles={['admin']}><AdminScrims /></ProtectedRoute>} />
+        <Route path="/admin/tournaments" element={<ProtectedRoute roles={['admin']}><AdminTournaments /></ProtectedRoute>} />
         <Route path="/admin/disputes" element={<ProtectedRoute roles={['admin']}><AdminDisputes /></ProtectedRoute>} />
         <Route path="/admin/settings" element={<ProtectedRoute roles={['admin']}><AdminSettings /></ProtectedRoute>} />
         <Route path="/admin/simulator" element={<ProtectedRoute roles={['admin']}><AdminSimulator /></ProtectedRoute>} />
