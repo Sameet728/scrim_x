@@ -128,6 +128,61 @@ exports.createEnterpriseTournament = async (req, res) => {
   }
 };
 
+exports.updateTournamentBasicDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = req.user.role === 'admin' ? { _id: id } : { _id: id, organizer: req.user._id };
+    const tournament = await Tournament.findOne(query);
+
+    if (!tournament) {
+      return res.status(404).json({ success: false, message: 'Tournament not found or unauthorized.' });
+    }
+
+    const {
+      title, subtitle, shortDescription, description,
+      game, format, mode,
+      entryFee,
+      matchStartDate, registrationOpen, registrationClose,
+      banner
+    } = req.body;
+
+    if (title) tournament.title = title;
+    if (subtitle !== undefined) tournament.subtitle = subtitle;
+    if (shortDescription !== undefined) tournament.shortDescription = shortDescription;
+    if (description !== undefined) tournament.description = description;
+    
+    if (game) tournament.game = game;
+    if (format) tournament.format = format;
+    if (mode) tournament.mode = mode;
+    
+    if (entryFee !== undefined) {
+      if (!tournament.finance) tournament.finance = {};
+      tournament.finance.entryFee = Number(entryFee);
+    }
+    
+    if (matchStartDate !== undefined || registrationOpen !== undefined || registrationClose !== undefined) {
+      if (!tournament.schedule) tournament.schedule = {};
+      if (matchStartDate) tournament.schedule.matchStartDate = new Date(matchStartDate);
+      if (registrationOpen) tournament.schedule.registrationOpen = new Date(registrationOpen);
+      if (registrationClose) tournament.schedule.registrationClose = new Date(registrationClose);
+    }
+
+    if (banner !== undefined) tournament.banner = banner;
+
+    await tournament.save();
+    
+    // Clear global cache if exists so the marketplace reflects changes immediately
+    if (typeof GlobalTournamentCache !== 'undefined') {
+       GlobalTournamentCache.data = null;
+    }
+
+    res.json({ success: true, message: 'Tournament details updated successfully.', data: tournament });
+  } catch (error) {
+    console.error('updateTournamentBasicDetails error:', error);
+    res.status(500).json({ success: false, message: 'Failed to update tournament details.' });
+  }
+};
+
 const TournamentStage = require('../models/TournamentStage');
 const TournamentGroup = require('../models/TournamentGroup');
 const TournamentSlot = require('../models/TournamentSlot');
