@@ -9,13 +9,13 @@ const { validate } = require('../middleware/validate.middleware');
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 500,
   message: { success: false, message: 'Too many login attempts. Try again in 15 minutes.' }
 });
 
 const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,  // 1 hour
-  max: 5,                     // 5 registrations per hour per IP
+  max: 500,                  // Increased limit for production (was 5)
   message: { success: false, message: 'Too many accounts created. Try again later.' }
 });
 
