@@ -32,6 +32,7 @@ router.post('/upload-proof', protect, upload.single('proof'), tournamentControll
 router.post('/:id/scaffold', authorize('organizer', 'admin'), tournamentController.generateScaffolding);
 router.post('/:id/scaffold-roadmap', authorize('organizer', 'admin'), tournamentController.scaffoldRoadmap);
 router.post('/:id/publish', authorize('organizer', 'admin'), tournamentController.publishTournament);
+router.put('/:id/basic-details', authorize('organizer', 'admin'), tournamentController.updateTournamentBasicDetails);
 
 // Phase 1 Operations: Registrations & Slots
 router.get('/:id/registrations', authorize('organizer', 'admin'), tournamentController.getTournamentRegistrations);
