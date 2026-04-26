@@ -297,9 +297,16 @@ const TournamentDetails = () => {
   return (
     <div className="min-h-screen bg-dark-950 text-dark-200">
       {/* Hero Banner */}
-      <div className="relative h-80 bg-dark-900 border-b border-surface-border flex items-end overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/60 to-transparent z-0" />
-        <div className="absolute inset-0 opacity-5">
+      <div 
+        className="relative h-80 bg-dark-900 border-b border-surface-border flex items-end overflow-hidden"
+        style={{
+          backgroundImage: `url(${tournament.banner || 'https://res.cloudinary.com/dwy40gq1t/image/upload/v1738743132/default_gaming_banner_t8u7m9.jpg'})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/80 to-dark-950/30 z-0" />
+        <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-neon-cyan blur-3xl" />
           <div className="absolute bottom-0 left-20 w-48 h-48 rounded-full bg-primary-500 blur-3xl" />
         </div>
