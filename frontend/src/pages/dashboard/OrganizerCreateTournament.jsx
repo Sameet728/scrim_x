@@ -22,7 +22,7 @@ const OrganizerCreateTournament = () => {
 
     // Step 2
     schedule: {
-      registrationOpen: '', registrationClose: '', checkInOpen: '', checkInClose: '',
+      registrationOpen: '', registrationClose: '',
       matchStartDate: '', reportingDeadline: '', resultVerificationDeadline: '', prizePayoutDate: '',
       timezone: 'Asia/Kolkata', isMultiDay: false, numberOfDays: 1
     },
@@ -286,16 +286,6 @@ const OrganizerCreateTournament = () => {
                     <input type="datetime-local" name="schedule.registrationClose" value={formData.schedule.registrationClose} onChange={handleChange} required className="input-field bg-dark-950 border-red-500/30" />
                  </div>
 
-                 <div className="col-span-2 my-2 border-t border-dark-800"></div>
-
-                 <div>
-                    <label className="text-sm font-medium text-dark-300 block mb-1">Check-in Window Opens</label>
-                    <input type="datetime-local" name="schedule.checkInOpen" value={formData.schedule.checkInOpen} onChange={handleChange} className="input-field" />
-                 </div>
-                 <div>
-                    <label className="text-sm font-medium text-dark-300 block mb-1">Check-in Closes</label>
-                    <input type="datetime-local" name="schedule.checkInClose" value={formData.schedule.checkInClose} onChange={handleChange} className="input-field" />
-                 </div>
 
                  <div className="col-span-2 my-2 border-t border-dark-800"></div>
 
