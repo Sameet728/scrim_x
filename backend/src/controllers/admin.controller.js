@@ -8,6 +8,7 @@ const Team = require('../models/Team');
 const TournamentGroup = require('../models/TournamentGroup');
 const TournamentSlot = require('../models/TournamentSlot');
 const Registration = require('../models/Registration');
+const Tournament = require('../models/Tournament');
 const mongoose = require('mongoose');
 
 // @desc    Get all users
@@ -184,7 +185,7 @@ const getAllScrims = async (req, res, next) => {
   }
 };
 
-// @desc    Delete a scrim
+// @desc    Force delete a scrim and all related data
 // @route   DELETE /api/admin/scrims/:id
 const deleteScrim = async (req, res, next) => {
   try {
@@ -194,10 +195,22 @@ const deleteScrim = async (req, res, next) => {
       throw new AppError('Scrim not found', 404);
     }
 
-    await Scrim.findByIdAndDelete(req.params.id);
+    const sid = scrim._id;
+
+    // Cascade delete all related data
+    const ScrimChat = require('../models/ScrimChat');
+    const Result = require('../models/Result');
+
+    await Promise.all([
+      Registration.deleteMany({ scrim: sid }),
+      ScrimChat.deleteMany({ scrimId: sid }),
+      Result.deleteMany({ scrim: sid }),
+    ]);
+
+    await Scrim.findByIdAndDelete(sid);
 
     sendResponse(res, 200, {
-      message: 'Scrim deleted successfully'
+      message: `Scrim "${scrim.title}" and all related data deleted successfully`
     });
   } catch (error) {
     next(error);
@@ -629,12 +642,89 @@ const setOrganizerTier = async (req, res, next) => {
   }
 };
 
+// @desc    Get all tournaments
+// @route   GET /api/admin/tournaments
+const getAllTournaments = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 50 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const total = await Tournament.countDocuments();
+    const tournaments = await Tournament.find()
+      .populate('organizer', 'username organizerProfile.displayName')
+      .sort('-createdAt')
+      .skip(skip)
+      .limit(parseInt(limit))
+      .lean();
+
+    // Attach registration counts
+    const TournamentRegistration = require('../models/TournamentRegistration');
+    for (const t of tournaments) {
+      t.registrationCount = await TournamentRegistration.countDocuments({ tournamentId: t._id });
+    }
+
+    sendResponse(res, 200, {
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / parseInt(limit)),
+      count: tournaments.length,
+      tournaments
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Force delete a tournament and all related data
+// @route   DELETE /api/admin/tournaments/:id
+const deleteTournament = async (req, res, next) => {
+  try {
+    const tournament = await Tournament.findById(req.params.id);
+    if (!tournament) throw new AppError('Tournament not found', 404);
+
+    const tid = tournament._id;
+
+    // Cascade delete all related data
+    const TournamentRegistration = require('../models/TournamentRegistration');
+    const TournamentStage = require('../models/TournamentStage');
+    const TournamentResult = require('../models/TournamentResult');
+    const TournamentChat = require('../models/TournamentChat');
+    const TournamentDispute = require('../models/TournamentDispute');
+    const TournamentAnnouncement = require('../models/TournamentAnnouncement');
+    const TournamentRoomRelease = require('../models/TournamentRoomRelease');
+
+    // Get all groups to delete their slots
+    const groupIds = (await TournamentGroup.find({ tournamentId: tid }).select('_id').lean()).map(g => g._id);
+
+    await Promise.all([
+      TournamentSlot.deleteMany({ groupId: { $in: groupIds } }),
+      TournamentGroup.deleteMany({ tournamentId: tid }),
+      TournamentRegistration.deleteMany({ tournamentId: tid }),
+      TournamentStage.deleteMany({ tournamentId: tid }),
+      TournamentResult.deleteMany({ tournamentId: tid }),
+      TournamentChat.deleteMany({ tournamentId: tid }),
+      TournamentDispute.deleteMany({ tournamentId: tid }),
+      TournamentAnnouncement.deleteMany({ tournamentId: tid }),
+      TournamentRoomRelease.deleteMany({ tournamentId: tid }),
+    ]);
+
+    await Tournament.findByIdAndDelete(tid);
+
+    sendResponse(res, 200, {
+      message: `Tournament "${tournament.title}" and all related data deleted successfully`
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllUsers,
   addWalletBalance,
   deleteUser,
   getAllScrims,
   deleteScrim,
+  getAllTournaments,
+  deleteTournament,
   resetUserPassword,
   forceJoinEvent,
   bulkForceJoinEvent,
