@@ -300,7 +300,7 @@ const TournamentDetails = () => {
       <div 
         className="relative h-80 bg-dark-900 border-b border-surface-border flex items-end overflow-hidden"
         style={{
-          backgroundImage: `url(${tournament.banner || 'https://res.cloudinary.com/dwy40gq1t/image/upload/v1738743132/default_gaming_banner_t8u7m9.jpg'})`,
+          backgroundImage: `url(${tournament.banner || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
