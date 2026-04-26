@@ -117,17 +117,11 @@ const AllTournamentsPage = () => {
                   >
                     {/* Banner */}
                     <div className="relative h-32 bg-gradient-to-br from-dark-800 to-dark-700 overflow-hidden">
-                      {t.banner ? (
-                        <img
-                          src={t.banner}
-                          alt={t.title}
-                          className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <HiCollection className="text-5xl text-dark-700" />
-                        </div>
-                      )}
+                      <img
+                        src={t.banner || 'https://res.cloudinary.com/dwy40gq1t/image/upload/v1738743132/default_gaming_banner_t8u7m9.jpg'}
+                        alt={t.title}
+                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                      />
                       {/* Status Badge */}
                       <div className="absolute top-3 left-3">
                         <span className={`text-[10px] font-bold uppercase tracking-wider border px-2 py-1 rounded-full ${sc.color}`}>
