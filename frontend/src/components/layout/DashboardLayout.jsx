@@ -125,6 +125,7 @@ const DashboardLayout = ({ children }) => {
           { icon: <HiFire />, label: 'Boosts', path: `${base}/boosts` },
           { icon: <HiUsers />, label: 'Users', path: `${base}/users` },
           { icon: <HiCollection />, label: 'Scrims', path: `${base}/scrims` },
+          { icon: <HiFlag />, label: 'Tournaments', path: `${base}/tournaments` },
           { icon: <HiShieldCheck />, label: 'Moderation', path: `${base}/moderation` },
           { icon: <HiSupport />, label: 'Disputes', path: `${base}/disputes` },
           { icon: <HiChartBar />, label: 'Analytics', path: `${base}/analytics` },
