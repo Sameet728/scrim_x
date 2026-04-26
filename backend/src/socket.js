@@ -64,22 +64,45 @@ const setupSocket = (io) => {
       socket.leave(`scrim_${scrimId}`);
     });
 
-    socket.on('scrim_message', (data) => {
+    socket.on('scrim_message', async (data) => {
       if (!socket.user) return;
-      const payload = {
-        scrimId: data.scrimId,
-        content: typeof data.content === 'string'
-          ? data.content.trim().substring(0, 500)
-          : '',
-        sender: {
-          _id: socket.user._id,
-          username: socket.user.username,
-          role: socket.user.role
-        },
-        createdAt: new Date().toISOString()
-      };
-      if (!payload.content) return;
-      io.to(`scrim_${data.scrimId}`).emit('scrim_message', payload);
+      const content = typeof data.content === 'string'
+        ? data.content.trim().substring(0, 500)
+        : '';
+      if (!content || !data.scrimId) return;
+
+      try {
+        const ScrimChat = require('./models/ScrimChat');
+        const saved = await ScrimChat.create({
+          scrimId: data.scrimId,
+          sender: socket.user._id,
+          message: content
+        });
+
+        const populated = await ScrimChat.findById(saved._id)
+          .populate('sender', 'username ign role avatar');
+
+        io.to(`scrim_${data.scrimId}`).emit('scrim_message', {
+          _id: populated._id,
+          scrimId: data.scrimId,
+          content: populated.message,
+          sender: populated.sender,
+          createdAt: populated.createdAt
+        });
+      } catch (err) {
+        console.error('[ScrimChat persist]', err.message);
+        // Fallback: broadcast without persistence
+        io.to(`scrim_${data.scrimId}`).emit('scrim_message', {
+          scrimId: data.scrimId,
+          content,
+          sender: {
+            _id: socket.user._id,
+            username: socket.user.username,
+            role: socket.user.role
+          },
+          createdAt: new Date().toISOString()
+        });
+      }
     });
 
     // === TOURNAMENT COMMUNITY CHAT ===
