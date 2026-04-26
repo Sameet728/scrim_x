@@ -89,6 +89,17 @@ const TournamentManager = () => {
               >
                 <HiMenuAlt2 className="text-lg" />
               </button>
+              
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/tournaments/${tournament?._id}`);
+                  toast.success('Public tournament link copied!');
+                }}
+                className="btn-ghost text-sm flex items-center gap-2 border border-surface-border hover:border-primary-500/50 hover:text-primary-400"
+              >
+                <HiOutlineShare /> Share Link
+              </button>
+
               <button onClick={() => navigate('/organizer/tournaments')} className="btn-ghost text-sm">Exit Manager</button>
               {tournament?.status === 'draft' && (
                  <button onClick={handlePublish} className="btn-primary text-sm px-6">Publish Edits</button>
