@@ -24,7 +24,7 @@ const MarketplacePage = () => {
     skillTier: searchParams.get('skillTier') || '',
     minPrize: searchParams.get('minPrize') || '',
     maxFee: searchParams.get('maxFee') || '',
-    sort: searchParams.get('sort') || '-date',
+    sort: searchParams.get('sort') || 'newest',
     featured: searchParams.get('featured') || '',
     isElite: searchParams.get('isElite') || '',
   });
@@ -79,7 +79,7 @@ const MarketplacePage = () => {
   };
 
   const clearFilters = () => {
-    const newFilters = { search: '', format: '', mode: '', skillTier: '', minPrize: '', maxFee: '', sort: '-date', featured: '', isElite: activeTab === 'featured' ? 'true' : '' };
+    const newFilters = { search: '', format: '', mode: '', skillTier: '', minPrize: '', maxFee: '', sort: 'newest', featured: '', isElite: activeTab === 'featured' ? 'true' : '' };
     setFilters(newFilters);
     fetchScrims(1, newFilters);
   };
@@ -187,7 +187,7 @@ const MarketplacePage = () => {
                 }}
                 className="input-field text-sm w-44"
               >
-                <option value="-date">Newest First</option>
+                <option value="newest">Newest First</option>
                 <option value="date_asc">Starting Soon</option>
                 <option value="prize_desc">Highest Prize</option>
                 <option value="prize_asc">Lowest Prize</option>
