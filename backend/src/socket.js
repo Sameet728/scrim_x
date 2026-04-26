@@ -71,6 +71,9 @@ const setupSocket = (io) => {
         : '';
       if (!content || !data.scrimId) return;
 
+      // Ensure sender is in the scrim room (fallback if join_scrim validation was slow/failed)
+      socket.join(`scrim_${data.scrimId}`);
+
       try {
         const ScrimChat = require('./models/ScrimChat');
         const saved = await ScrimChat.create({
