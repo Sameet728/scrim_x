@@ -33,6 +33,7 @@ const TournamentManager = () => {
     { name: 'Create Groups', path: `/organizer/tournaments/${id}/groups`, icon: HiOutlineViewGrid },
     { name: 'Add Results', path: `/organizer/tournaments/${id}/results`, icon: HiOutlineChartBar },
     { name: 'Disputes', path: `/organizer/tournaments/${id}/disputes`, icon: HiOutlineFlag },
+    { name: 'Settings', path: `/organizer/tournaments/${id}/settings`, icon: HiOutlineCog },
   ];
 
   useEffect(() => {
@@ -121,7 +122,7 @@ const TournamentManager = () => {
 
            {/* Dynamic Viewport Output */}
            <div className="flex-1 bg-dark-900 rounded-2xl border border-surface-border overflow-y-auto custom-scrollbar p-6 min-w-0">
-              <Outlet />
+              <Outlet context={{ tournament, setTournament }} />
            </div>
 
         </div>
