@@ -1026,6 +1026,7 @@ exports.registerForTournament = async (req, res) => {
      
      if (!termsAccepted) return res.status(400).json({ success: false, message: 'Tournament Rules must be explicitly accepted.' });
      if (!roster || roster.length === 0) return res.status(400).json({ success: false, message: 'A physical roster is required.' });
+     if (roster.length < 4) return res.status(400).json({ success: false, message: `Your team must have at least 4 players to enter a tournament. Your roster currently has ${roster.length} player(s).` });
 
      // Double Registration Validation natively
      const exists = await TournamentRegistration.findOne({ tournamentId: req.params.id, teamId });
