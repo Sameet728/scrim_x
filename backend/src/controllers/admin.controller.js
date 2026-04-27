@@ -217,6 +217,85 @@ const deleteScrim = async (req, res, next) => {
   }
 };
 
+// @desc    Bulk delete scrims and all related data
+// @route   DELETE /api/admin/scrims/bulk
+const bulkDeleteScrims = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      throw new AppError('Please provide an array of scrim IDs to delete.', 400);
+    }
+    if (ids.length > 50) {
+      throw new AppError('Cannot bulk delete more than 50 items at once.', 400);
+    }
+
+    const ScrimChat = require('../models/ScrimChat');
+    const Result = require('../models/Result');
+
+    // Run cascade deletions in parallel for all selected scrims
+    await Promise.all([
+      Registration.deleteMany({ scrim: { $in: ids } }),
+      ScrimChat.deleteMany({ scrimId: { $in: ids } }),
+      Result.deleteMany({ scrim: { $in: ids } }),
+    ]);
+
+    const deleteResult = await Scrim.deleteMany({ _id: { $in: ids } });
+
+    sendResponse(res, 200, {
+      message: `${deleteResult.deletedCount} scrim(s) and all associated data deleted successfully.`,
+      deletedCount: deleteResult.deletedCount,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Bulk delete tournaments and all related data
+// @route   DELETE /api/admin/tournaments/bulk
+const bulkDeleteTournaments = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      throw new AppError('Please provide an array of tournament IDs to delete.', 400);
+    }
+    if (ids.length > 50) {
+      throw new AppError('Cannot bulk delete more than 50 items at once.', 400);
+    }
+
+    const TournamentRegistration = require('../models/TournamentRegistration');
+    const TournamentStage = require('../models/TournamentStage');
+    const TournamentResult = require('../models/TournamentResult');
+    const TournamentChat = require('../models/TournamentChat');
+    const TournamentDispute = require('../models/TournamentDispute');
+    const TournamentAnnouncement = require('../models/TournamentAnnouncement');
+    const TournamentRoomRelease = require('../models/TournamentRoomRelease');
+
+    // Get all groups across selected tournaments so slots can be cascade deleted
+    const groupIds = (await TournamentGroup.find({ tournamentId: { $in: ids } }).select('_id').lean()).map(g => g._id);
+
+    await Promise.all([
+      TournamentSlot.deleteMany({ groupId: { $in: groupIds } }),
+      TournamentGroup.deleteMany({ tournamentId: { $in: ids } }),
+      TournamentRegistration.deleteMany({ tournamentId: { $in: ids } }),
+      TournamentStage.deleteMany({ tournamentId: { $in: ids } }),
+      TournamentResult.deleteMany({ tournamentId: { $in: ids } }),
+      TournamentChat.deleteMany({ tournamentId: { $in: ids } }),
+      TournamentDispute.deleteMany({ tournamentId: { $in: ids } }),
+      TournamentAnnouncement.deleteMany({ tournamentId: { $in: ids } }),
+      TournamentRoomRelease.deleteMany({ tournamentId: { $in: ids } }),
+    ]);
+
+    const deleteResult = await Tournament.deleteMany({ _id: { $in: ids } });
+
+    sendResponse(res, 200, {
+      message: `${deleteResult.deletedCount} tournament(s) and all associated data deleted successfully.`,
+      deletedCount: deleteResult.deletedCount,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Reset a user's password (admin override)
 // @route   PUT /api/admin/users/:id/reset-password
 const resetUserPassword = async (req, res, next) => {
@@ -723,8 +802,10 @@ module.exports = {
   deleteUser,
   getAllScrims,
   deleteScrim,
+  bulkDeleteScrims,
   getAllTournaments,
   deleteTournament,
+  bulkDeleteTournaments,
   resetUserPassword,
   forceJoinEvent,
   bulkForceJoinEvent,
