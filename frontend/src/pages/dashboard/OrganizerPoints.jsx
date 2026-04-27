@@ -8,7 +8,7 @@ import Badge from '../../components/ui/Badge';
 import QRCode from 'react-qr-code';
 
 const OrganizerPoints = () => {
-  const [data, setData] = useState({ tierInfo: {}, wallet: {}, transactions: [], pendingRequests: [], scrimCost: 30, totalScrimsHosted: 0, totalPlayersHosted: 0 });
+  const [data, setData] = useState({ tierInfo: {}, wallet: {}, transactions: [], pendingRequests: [], scrimCost: 15, totalScrimsHosted: 0, totalPlayersHosted: 0 });
   const [adminUpiId, setAdminUpiId] = useState('');
   const [loading, setLoading] = useState(true);
   const [requestModal, setRequestModal] = useState(false);
