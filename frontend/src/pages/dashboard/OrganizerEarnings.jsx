@@ -96,7 +96,7 @@ const OrganizerEarnings = () => {
               Top Up Platform Credits
             </h3>
             <p className="text-xs text-dark-400 mb-4">
-              Pay admin via UPI to add credits. Credits are used to publish scrims (30 credits per scrim).
+              Pay admin via UPI to add credits. Credits are used to publish scrims (15 credits per scrim).
             </p>
             <Link to="/organizer/points" className="btn-neon text-sm w-full text-center py-2 block">
               Add Credits →
