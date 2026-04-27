@@ -234,7 +234,7 @@ const OrganizerProfile = () => {
                   <HiLightningBolt className="text-primary-500" />
                   {org.pointsWallet?.balance || 0}
                 </div>
-                <div className="text-[10px] text-primary-400 mt-1">30 points per scrim publish</div>
+                <div className="text-[10px] text-primary-400 mt-1">15 points per scrim publish</div>
               </div>
               <Link to="/organizer/points" className="bg-primary-500/20 text-primary-400 hover:bg-primary-500 hover:text-white transition-colors text-xs font-bold px-3 py-2 rounded-lg border border-primary-500/30">
                 Top Up
