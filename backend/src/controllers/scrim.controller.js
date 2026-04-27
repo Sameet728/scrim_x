@@ -339,7 +339,7 @@ const publishScrim = async (req, res, next) => {
       throw new AppError('Scrim can only be published from draft status', 400);
     }
 
-    const HOSTING_COST = 30;
+    const HOSTING_COST = 15;
 
     // Super Organizer bypass — free publish
     const tierInfo = getOrganizerTierInfo(req.user);
@@ -356,7 +356,7 @@ const publishScrim = async (req, res, next) => {
     const currentBalance = user.organizerProfile?.pointsWallet?.balance || 0;
 
     if (currentBalance < HOSTING_COST) {
-      throw new AppError('Payment Required: You need at least 30 points to host a scrim', 402);
+      throw new AppError('Payment Required: You need at least 15 points to host a scrim', 402);
     }
 
     // Attempt conditional decrement logic
