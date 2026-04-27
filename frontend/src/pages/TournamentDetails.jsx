@@ -145,6 +145,13 @@ const TournamentDetails = () => {
   };
 
   const handleDirectJoin = async (team) => {
+    // Enforce minimum 4 players in the team roster
+    const memberCount = team.members?.length || 0;
+    if (memberCount < 4) {
+      toast.error(`Your team needs at least 4 players to join a tournament. Currently you have ${memberCount} player${memberCount === 1 ? '' : 's'}.`);
+      return;
+    }
+
     setJoiningTeamId(team._id);
     try {
       // Direct POST to register - backend will auto-approve if fee is 0
@@ -505,30 +512,46 @@ const TournamentDetails = () => {
                   </div>
                ) : (
                   <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
-                     {userTeams.map(team => (
-                        <div key={team._id} className="bg-dark-950 border border-surface-border rounded-xl p-4 hover:border-neon-cyan/50 transition-colors flex items-center justify-between">
-                           <div className="flex items-center gap-3">
+                     <p className="text-xs text-dark-400 flex items-center gap-1.5 pb-2 border-b border-surface-border">
+                       <HiOutlineUsers className="text-neon-cyan" />
+                       Minimum 4 players required to join a tournament
+                     </p>
+                     {userTeams.map(team => {
+                        const memberCount = team.members?.length || 0;
+                        const eligible = memberCount >= 4;
+                        return (
+                          <div key={team._id} className={`bg-dark-950 border rounded-xl p-4 flex items-center justify-between transition-colors ${eligible ? 'border-surface-border hover:border-neon-cyan/50' : 'border-red-500/20 opacity-60'}`}>
+                            <div className="flex items-center gap-3">
                               {team.logoImage ? (
-                                 <img src={team.logoImage} alt="logo" className="w-10 h-10 rounded-lg object-cover bg-dark-800" />
+                                <img src={team.logoImage} alt="logo" className="w-10 h-10 rounded-lg object-cover bg-dark-800" />
                               ) : (
-                                 <div className="w-10 h-10 rounded-lg bg-dark-800 flex items-center justify-center text-dark-300 font-bold">
-                                    {team.name?.[0]?.toUpperCase()}
-                                 </div>
+                                <div className="w-10 h-10 rounded-lg bg-dark-800 flex items-center justify-center text-dark-300 font-bold">
+                                  {team.name?.[0]?.toUpperCase()}
+                                </div>
                               )}
                               <div>
-                                 <p className="text-white font-bold text-sm">{team.name}</p>
-                                 <p className="text-xs text-dark-400">{team.members?.length || 0} Members</p>
+                                <p className="text-white font-bold text-sm">{team.name}</p>
+                                <p className={`text-xs font-semibold ${eligible ? 'text-green-400' : 'text-red-400'}`}>
+                                  {memberCount} / 4 Players {eligible ? '✓' : '— Need more players'}
+                                </p>
                               </div>
-                           </div>
-                           <button 
-                              onClick={() => handleDirectJoin(team)}
-                              disabled={joiningTeamId === team._id || appliedTeams.has(team._id)}
-                              className={`px-4 py-2 font-bold text-sm rounded-lg transition-colors disabled:opacity-50 ${appliedTeams.has(team._id) ? 'bg-dark-700 text-white' : 'bg-green-500 hover:bg-green-600 text-dark-950'}`}
-                           >
-                              {appliedTeams.has(team._id) ? 'Applied' : joiningTeamId === team._id ? 'Joining...' : 'Select'}
-                           </button>
-                        </div>
-                     ))}
+                            </div>
+                            {eligible ? (
+                              <button
+                                onClick={() => handleDirectJoin(team)}
+                                disabled={joiningTeamId === team._id || appliedTeams.has(team._id)}
+                                className={`px-4 py-2 font-bold text-sm rounded-lg transition-colors disabled:opacity-50 ${appliedTeams.has(team._id) ? 'bg-dark-700 text-white' : 'bg-green-500 hover:bg-green-600 text-dark-950'}`}
+                              >
+                                {appliedTeams.has(team._id) ? 'Applied' : joiningTeamId === team._id ? 'Joining...' : 'Select'}
+                              </button>
+                            ) : (
+                              <span className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg text-xs font-bold whitespace-nowrap">
+                                Need 4 Players
+                              </span>
+                            )}
+                          </div>
+                        );
+                     })}
                   </div>
                )}
             </div>
