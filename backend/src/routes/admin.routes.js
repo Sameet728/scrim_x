@@ -6,8 +6,10 @@ const {
   deleteUser,
   getAllScrims,
   deleteScrim,
+  bulkDeleteScrims,
   getAllTournaments,
   deleteTournament,
+  bulkDeleteTournaments,
   resetUserPassword,
   forceJoinEvent,
   grantSuperOrganizer,
@@ -56,12 +58,20 @@ if (bulkForceJoinEvent) {
 router.route('/scrims')
   .get(getAllScrims);
 
+// IMPORTANT: bulk route must come BEFORE /:id to avoid route conflict
+router.route('/scrims/bulk')
+  .delete(bulkDeleteScrims);
+
 router.route('/scrims/:id')
   .delete(deleteScrim);
 
 // Tournament Management Routes
 router.route('/tournaments')
   .get(getAllTournaments);
+
+// IMPORTANT: bulk route must come BEFORE /:id to avoid route conflict
+router.route('/tournaments/bulk')
+  .delete(bulkDeleteTournaments);
 
 router.route('/tournaments/:id')
   .delete(deleteTournament);
