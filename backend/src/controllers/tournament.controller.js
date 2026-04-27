@@ -485,6 +485,20 @@ exports.updateRegistrationStatus = async (req, res) => {
        reason: organizerNotes || 'Manual trigger'
     });
 
+    // If the registration is rejected, remove it physically so the team can reapply.
+    if (status === 'rejected') {
+       await TournamentRegistration.findByIdAndDelete(reg._id);
+       
+       // Also free up any slot this team was occupying
+       const TournamentSlot = require('../models/TournamentSlot');
+       await TournamentSlot.updateOne(
+          { tournamentId: req.params.id, occupyingTeam: reg.teamId },
+          { $set: { occupyingTeam: null, status: 'empty', assignedAt: null } }
+       );
+       
+       return res.json({ success: true, message: 'Registration rejected and removed. Team can now reapply.', data: null });
+    }
+
     reg.status = status;
     if (organizerNotes) reg.organizerNotes = organizerNotes;
     await reg.save();
